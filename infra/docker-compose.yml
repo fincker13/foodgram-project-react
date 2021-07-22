@@ -1,13 +1,51 @@
 version: '3.3'
 services:
 
+
   frontend:
+    container_name: Frontend
     build:
       context: ../frontend
       dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
+
+  db:
+    container_name: PostgreSQl
+    image: postgres:12.4
+    volumes: 
+        - postgres_data:/var/lib/postgresql/postgres_data
+    env_file: 
+        - ./.env  
+
+  django:
+    container_name: Django
+    build: 
+      context: ../backend
+      dockerfile: Dockerfile
+    tty: true
+    ports: 
+      - '8000:8000'
+    expose: 
+      - 8000
+    depends_on: 
+        - db
+    env_file: 
+        - ./.env
+  
+  migrator:
+    container_name: Migrator
+    build: 
+      context: ../backend
+      dockerfile: Dockerfile
+    command: python manage.py migrate
+    env_file:
+      - .env
+    depends_on:
+      - db
+
   nginx:
+    container_name: Nginx
     image: nginx:1.19.3
     ports:
       - 80:80
@@ -16,3 +54,11 @@ services:
       - ../frontend/build:/usr/share/nginx/html/
       - ../docs/redoc.html:/usr/share/nginx/html/api/docs/redoc.html
       - ../docs/openapi-schema.yml:/usr/share/nginx/html/api/docs/openapi-schema.yml
+      - static_value:/var/html/static/
+      - media_value:/var/html/media/
+    depends_on:
+      - django
+volumes:
+    postgres_data:
+    static_value:
+    media_value:
