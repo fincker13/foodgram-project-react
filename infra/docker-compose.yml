@@ -16,7 +16,7 @@ services:
     volumes: 
         - postgres_data:/var/lib/postgresql/postgres_data
     env_file: 
-        - ./.env  
+        - ../backend/.env  
 
   django:
     container_name: Django
@@ -28,10 +28,13 @@ services:
       - '8000:8000'
     expose: 
       - 8000
+    volumes:
+      - static_value:/code/django_static/
+      - media_value:/code/django_media/
     depends_on: 
         - db
     env_file: 
-        - ./.env
+        - .env
   
   migrator:
     container_name: Migrator
@@ -54,7 +57,7 @@ services:
       - ../frontend/build:/usr/share/nginx/html/
       - ../docs/redoc.html:/usr/share/nginx/html/api/docs/redoc.html
       - ../docs/openapi-schema.yml:/usr/share/nginx/html/api/docs/openapi-schema.yml
-      - static_value:/var/html/static/
+      - static_value:/var/html/django_static/
       - media_value:/var/html/media/
     depends_on:
       - django

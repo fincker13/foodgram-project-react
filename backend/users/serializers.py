@@ -12,7 +12,13 @@ class UserSerializers(serializers.Serializer):
 
     class Meta:
         model = User
-        fields = '__all__'
+        fields = (
+            'username',
+            'email',
+            'id',
+            'first_name',
+            'last_name',
+        )
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -26,8 +32,11 @@ class UserSerializers(serializers.Serializer):
         user.save()
         return user
 
-
-class ChangePasswordSerializer(serializers.Serializer):
-    current_password = serializers.CharField(required=True)
-    new_password = serializers.CharField(required=True)
-    model = User
+    def to_representation(self, instance):
+        return {
+            'id': instance.id,
+            'email': instance.email,
+            'username': instance.username,
+            'first_name': instance.first_name,
+            'last_name': instance.last_name
+        }

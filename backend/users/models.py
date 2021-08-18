@@ -21,7 +21,3 @@ class User(AbstractUser):
         verbose_name='Фамилия',
         max_length=150,
     )
-    is_subscribed = models.BooleanField(
-        verbose_name='Подписан ли текущий пользователь на этого',
-        default=False
-    )

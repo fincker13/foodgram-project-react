@@ -6,11 +6,11 @@ load_dotenv()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-SECRET_KEY = 't*#hd_p((gzq2+c4j2)dwbi#5p8ez5o96ox18jiewekpe_1fu^'
+SECRET_KEY = os.getenv('SECRET_KEY', default='very_secret_key')
 
-DEBUG = True
+DEBUG = os.environ.get('DEBUG_VALUE', default=False)
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [os.environ.get('HOST', default="*"), ]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -19,11 +19,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'api_v1',
-    'users',
+    'django_filters',
+
     'rest_framework',
     'rest_framework.authtoken',
     'djoser',
+
+    'api_v1',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -57,7 +60,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 
-"""if DEBUG:
+if DEBUG:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -67,24 +70,14 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 else:
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('DB_NAME', 'postgres'),
-            'USER': os.environ.get('POSTGRES_USER', 'postgres'),
-            'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'postgres'),
-            'HOST': os.environ.get('DB_HOST', 'db'),
-            'PORT': os.environ.get('DB_PORT', '5432'),
+            'ENGINE': os.environ.get('DB_ENGINE', default='django.db.backends.postgresql'),
+            'NAME': os.environ.get('DB_NAME', default='postgres'),
+            'USER': os.environ.get('POSTGRES_USER', default='postgres'),
+            'PASSWORD': os.environ.get('POSTGRES_PASSWORD', default='postgres'),
+            'HOST': os.environ.get('DB_HOST', default='db'),
+            'PORT': os.environ.get('DB_PORT', default='5432'),
         }
-    }"""
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME', 'postgres'),
-        'USER': os.environ.get('POSTGRES_USER', 'postgres'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'postgres'),
-        'HOST': os.environ.get('DB_HOST', 'db'),
-        'PORT': os.environ.get('DB_PORT', '5432'),
     }
-}
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -114,7 +107,11 @@ USE_L10N = True
 USE_TZ = True
 
 
-STATIC_URL = '/static/'
+STATIC_URL = '/django_static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'django_static')
+
+MEDIA_URL = '/django_media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'django_media')
 
 AUTH_USER_MODEL = 'users.User'
 
@@ -126,6 +123,9 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ),
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'
+    ],
     'DEFAULT_PAGINATION_CLASS': [
         'rest_framework.pagination.PageNumberPagination',
     ],
@@ -135,7 +135,8 @@ REST_FRAMEWORK = {
 DJOSER = {
     'LOGIN_FIELD': 'email',
     'SERIALIZERS': {
-        'user': 'users.serializers.UserSerializers',
-    }
-
+        'user': 'api_v1.serializers.UserSerializer',
+        'user_create': 'users.serializers.UserSerializers',
+        'current_user': 'api_v1.serializers.UserSerializer'
+    },
 }
