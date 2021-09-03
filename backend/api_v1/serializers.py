@@ -84,7 +84,8 @@ class RecipesPostSerializer(serializers.ModelSerializer):
         queryset=Tag.objects.all()
     )
     ingredients = AmountPostSerializer(many=True)
-    image = Base64ImageField(required=False)
+    image = Base64ImageField(required=False) 
+    #TODO: катомная реализаыия работы с изображениями в BASE64
 
     class Meta:
         model = Recipes
@@ -106,7 +107,7 @@ class RecipesPostSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         ingredients = validated_data.pop('ingredients')
-        info = model_meta.get_field_info(instance)
+        info = model_meta.get_field_info(instance) # понять как от этого избавится !!!
         m2m_fields = []
         for attr, value in validated_data.items():
             if attr in info.relations and info.relations[attr].to_many:
