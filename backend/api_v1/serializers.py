@@ -174,6 +174,7 @@ class DetailUserSerializer(serializers.ModelSerializer):
 
 
 class FavoritSerializer(serializers.ModelSerializer):
+    # TODO: переписать!!!!!
     user = serializers.SlugRelatedField(
         slug_field='username',
         read_only=True,

@@ -26,6 +26,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly, )
     pagination_class = PageNumberPagination
     filter_backends = [filters.SearchFilter]
+    # TODO: добавить фильт по тегу
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -41,6 +42,7 @@ class IngrediensViewSet(viewsets.ModelViewSet):
     serializer_class = IngredientSerializer
     permission_classes = (IsAuthenticatedOrReadOnly, )
     pagination_class = None
+    # TODO: Добавить фильтрацию по имени
 
 
 class TagsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
