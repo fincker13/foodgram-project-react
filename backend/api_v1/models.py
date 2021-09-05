@@ -69,6 +69,9 @@ class Amount(models.Model):
 
 
 class Follow(models.Model):
+    """
+    Модель подписок
+    """
     user = models.ForeignKey(
         User,
         verbose_name='Подписчик',

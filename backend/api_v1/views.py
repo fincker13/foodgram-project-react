@@ -57,7 +57,8 @@ class FavoritViewSet(viewsets.ModelViewSet):
 class SubscribeViewSet(APIView):
     permission_classes = (IsAuthenticated, )
 
-    def get(self, request, id):
+    @staticmethod
+    def get(request, id):
         user = get_object_or_404(User, username=request.user)
         author = get_object_or_404(User, id=id)
         context = {
@@ -72,7 +73,8 @@ class SubscribeViewSet(APIView):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def delete(self, request, id):
+    @staticmethod
+    def delete(request, id):
         user = request.user
         author = get_object_or_404(User, id=id)
         follow = Follow.objects.get(user=user, author=author)
