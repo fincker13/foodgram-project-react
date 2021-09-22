@@ -1,31 +1,26 @@
 from django.shortcuts import get_object_or_404
-
-from rest_framework import status
-from rest_framework import filters, mixins, viewsets
-from rest_framework.views import APIView
-from rest_framework.response import Response
+from djoser.views import UserViewSet
+from rest_framework import mixins, status, viewsets
+from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import (
-    IsAuthenticatedOrReadOnly,
-    IsAuthenticated
-)
+from rest_framework.permissions import (IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from .models import Ingredient, Recipes, Tag, Follow, User
-from .serializers import (
-    FollowSerializer,
-    IngredientSerializer,
-    RecipesGetSerializer,
-    RecipesPostSerializer,
-    TagSerializer,
-    FavoritSerializer
-)
+from .filters import IngredientSearchFilter, RecipesFilter
+from .models import (Favorite, Follow, Ingredient, Recipes, Shopping_cart, Tag,
+                     User)
+from .serializers import (FollowSerializer, IngredientSerializer,
+                          RecipesGetSerializer, RecipesPostSerializer,
+                          RecipesSerializer, TagSerializer)
 
 
 class RecipesViewSet(viewsets.ModelViewSet):
     queryset = Recipes.objects.all()
     permission_classes = (IsAuthenticatedOrReadOnly, )
     pagination_class = PageNumberPagination
-    filter_backends = [filters.SearchFilter]
+    filter_class = RecipesFilter
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -35,11 +30,55 @@ class RecipesViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         return serializer.save(author=self.request.user)
 
+    @action(detail=True, permission_classes=[IsAuthenticated])
+    def favorite(self, request, pk=None):
+        recipe = self.get_object()
+        user = request.user
+        obj = Favorite.objects.create(
+            user=user, recipes=recipe
+        )
+        obj.save()
+        serializer = RecipesSerializer(recipe)
 
-class IngrediensViewSet(viewsets.ModelViewSet):
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @favorite.mapping.delete
+    def delete_favorite(self, request, pk=None):
+        user = request.user
+        recipes = self.get_object()
+        obj = Favorite.objects.get(user=user, recipes=recipes)
+        obj.delete()
+        serializer = RecipesSerializer(recipes)
+        return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True, permission_classes=[IsAuthenticated])
+    def shopping_cart(self, request, pk=None):
+        recipe = self.get_object()
+        user = request.user
+        obj = Shopping_cart.objects.create(
+            user=user, recipes=recipe
+        )
+        obj.save()
+        serializer = RecipesSerializer(recipe)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @shopping_cart.mapping.delete
+    def delete_shopping_cart(self, request, pk=None):
+        user = request.user
+        recipes = self.get_object()
+        obj = Shopping_cart.objects.get(user=user, recipes=recipes)
+        obj.delete()
+        serializer = RecipesSerializer(recipes)
+        return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
+
+
+class IngredientsViewSet(viewsets.ModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     permission_classes = (IsAuthenticatedOrReadOnly, )
+    filter_backends = [IngredientSearchFilter]
+    search_fields = ['^name']
     pagination_class = None
 
 
@@ -50,11 +89,8 @@ class TagsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     pagination_class = None
 
 
-class FavoritViewSet(viewsets.ModelViewSet):
-    serializer_class = FavoritSerializer
-
-
 class SubscribeViewSet(APIView):
+
     permission_classes = (IsAuthenticated, )
 
     @staticmethod
@@ -83,10 +119,9 @@ class SubscribeViewSet(APIView):
 
 
 class SubscriptionsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+
     serializer_class = FollowSerializer
     pagination_class = PageNumberPagination
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['=user__username']
 
     def get_queryset(self):
         user = get_object_or_404(User, username=self.request.user)

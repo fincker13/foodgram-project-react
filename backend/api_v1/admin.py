@@ -1,9 +1,9 @@
 from django.contrib import admin
 
-from .models import Follow, Amount, Favorit, Ingredient, Recipes, Tag
+from .models import Amount, Favorite, Follow, Ingredient, Recipes, Tag
 
 
-@admin.register(Favorit)
+@admin.register(Favorite)
 class FavoritAdmin(admin.ModelAdmin):
     list_display = ('pk', 'user', 'recipes')
     search_fields = ('user', )

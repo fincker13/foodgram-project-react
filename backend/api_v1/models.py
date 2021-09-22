@@ -37,6 +37,7 @@ class Recipes(models.Model):
     ingredients = models.ManyToManyField(
         Ingredient,
         through='Amount',
+        verbose_name='Ингридиенты'
     )
     tags = models.ManyToManyField(Tag, verbose_name='Теги')
     image = models.ImageField(
@@ -49,14 +50,6 @@ class Recipes(models.Model):
         default=1,
         verbose_name='Время приготовления',
         validators=[MinValueValidator(1)]
-    )
-    is_favorit = models.BooleanField(
-        verbose_name='Добавлено в избранное',
-        default=False
-    )
-    is_in_shopping_cart = models.BooleanField(
-        verbose_name='Добвленно в список покупок',
-        default=False
     )
     objects = models.Manager()
 
@@ -87,18 +80,35 @@ class Follow(models.Model):
     objects = models.Manager()
 
 
-class Favorit(models.Model):
+class Favorite(models.Model):
     user = models.ForeignKey(
         User,
         verbose_name='Подписчик',
         on_delete=models.CASCADE,
-        related_name='user',
+        related_name='favorites',
     )
     recipes = models.ForeignKey(
         Recipes,
         on_delete=models.SET_NULL,
         null=True,
         verbose_name='Рецепт',
-        related_name='favorit',
+        related_name='favorites',
+    )
+    objects = models.Manager()
+
+
+class Shopping_cart(models.Model):
+    user = models.ForeignKey(
+        User,
+        verbose_name='Подписчик',
+        on_delete=models.CASCADE,
+        related_name='shopping',
+    )
+    recipes = models.ForeignKey(
+        Recipes,
+        on_delete=models.SET_NULL,
+        null=True,
+        verbose_name='Рецепт',
+        related_name='shopping',
     )
     objects = models.Manager()

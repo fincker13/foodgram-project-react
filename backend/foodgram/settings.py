@@ -124,19 +124,21 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ),
     'DEFAULT_FILTER_BACKENDS': [
-        'django_filters.rest_framework.DjangoFilterBackend'
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
     ],
     'DEFAULT_PAGINATION_CLASS': [
         'rest_framework.pagination.PageNumberPagination',
     ],
-    'PAGE_SIZE': 6
+    'PAGE_SIZE': 6,
 }
 
 DJOSER = {
     'LOGIN_FIELD': 'email',
+    'USER_ID_FIELD': 'id',
+    'HIDE_USERS': False,
     'SERIALIZERS': {
         'user': 'api_v1.serializers.UserSerializer',
-        'user_create': 'users.serializers.UserSerializers',
         'current_user': 'api_v1.serializers.UserSerializer'
     },
 }

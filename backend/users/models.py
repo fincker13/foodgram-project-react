@@ -21,3 +21,10 @@ class User(AbstractUser):
         verbose_name='Фамилия',
         max_length=150,
     )
+    REQUIRED_FIELDS = [
+        'username',
+        'first_name',
+        'last_name'
+    ]
+    USERNAME_FIELD = 'email'
+
