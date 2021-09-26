@@ -141,3 +141,6 @@ django_static
 django_static/
 django_media
 django_media/
+
+.DS_Store
+
