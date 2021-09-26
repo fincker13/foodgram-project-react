@@ -27,4 +27,3 @@ class User(AbstractUser):
         'last_name'
     ]
     USERNAME_FIELD = 'email'
-
