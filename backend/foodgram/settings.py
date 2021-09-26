@@ -8,7 +8,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = os.getenv('SECRET_KEY', default='very_secret_key')
 
-DEBUG = os.environ.get('DEBUG_VALUE', default=False)
+DEBUG = False
 
 ALLOWED_HOSTS = [os.environ.get('HOST', default="*"), ]
 
@@ -134,11 +134,10 @@ REST_FRAMEWORK = {
 }
 
 DJOSER = {
-    'LOGIN_FIELD': 'email',
-    'USER_ID_FIELD': 'id',
-    'HIDE_USERS': False,
     'SERIALIZERS': {
         'user': 'api_v1.serializers.UserSerializer',
-        'current_user': 'api_v1.serializers.UserSerializer'
+        'current_user': 'api_v1.serializers.UserSerializer',
     },
+    'HIDE_USERS': False,
+    'USER_ID_FIELD': 'id',
 }
