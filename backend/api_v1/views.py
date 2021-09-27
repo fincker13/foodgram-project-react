@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, HttpResponse
+from django.shortcuts import HttpResponse, get_object_or_404
 from djoser.views import UserViewSet
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
@@ -6,13 +6,13 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import (IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
+
 from .filters import IngredientSearchFilter, RecipesFilter
-from .models import (Favorite, Follow, Ingredient, Recipes, Shopping_cart, Tag,
-                     User, Amount)
+from .models import (Amount, Favorite, Follow, Ingredient, Recipes,
+                     Shopping_cart, Tag, User)
 from .serializers import (FollowSerializer, IngredientSerializer,
                           RecipesGetSerializer, RecipesPostSerializer,
-                          RecipesSerializer, TagSerializer, UserSerializer,
-                          )
+                          RecipesSerializer, TagSerializer, UserSerializer)
 
 
 class IngredientsViewSet(viewsets.ModelViewSet):

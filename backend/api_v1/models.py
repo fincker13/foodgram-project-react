@@ -6,10 +6,19 @@ User = get_user_model()
 
 
 class Tag(models.Model):
+    BREAKFAST = '#E26C2D'
+    LUNCH = '#49B64E'
+    EVENING_MEAL = '#8775D2'
+    COLOR = {
+        (BREAKFAST, 'Завтрак'),
+        (LUNCH, 'Обед'),
+        (EVENING_MEAL, 'Ужин'),
+    }
     name = models.CharField(verbose_name='Tag', max_length=200)
     color = models.CharField(
         verbose_name='Color',
         max_length=200,
+        choices=COLOR,
         blank=True,
         null=True
     )
@@ -50,7 +59,11 @@ class Recipes(models.Model):
     cooking_time = models.IntegerField(
         default=1,
         verbose_name='Время приготовления',
-        validators=[MinValueValidator(1)]
+        validators=[MinValueValidator(
+            1,
+            'Укажите корретное время приготовления, '
+            'минимальное время приготовления 1 миниута'
+        )]
     )
     objects = models.Manager()
 
@@ -58,7 +71,13 @@ class Recipes(models.Model):
 class Amount(models.Model):
     recipes = models.ForeignKey(Recipes, on_delete=models.CASCADE)
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
-    amount = models.PositiveSmallIntegerField(verbose_name='Колличество')
+    amount = models.PositiveSmallIntegerField(
+        verbose_name='Колличество',
+        validators=[MinValueValidator(
+            1,
+            'Укажите корректное колличество продукта'
+        )]
+    )
     objects = models.Manager()
 
 
