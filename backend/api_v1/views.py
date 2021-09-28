@@ -1,5 +1,7 @@
-from django.shortcuts import HttpResponse, get_object_or_404
+from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
+from pdfdocument.document import register_fonts_from_paths
+from pdfdocument.utils import pdf_response
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
@@ -105,7 +107,11 @@ class RecipesViewSet(viewsets.ModelViewSet):
         shopping_list = {}
         user = request.user
         ingredients = Amount.objects.filter(recipes__shopping__user=user)
-
+        register_fonts_from_paths(regular='Winston-Black.ttf',
+                                  font_name='Winston-Black')
+        pdf, response = pdf_response('shopping-list',
+                                     font_name='Winston-Black')
+        pdf.init_report()
         for ingredient in ingredients:
             amount = ingredient.amount
             name = ingredient.ingredient.name
@@ -117,13 +123,11 @@ class RecipesViewSet(viewsets.ModelViewSet):
                 }
             else:
                 shopping_list[name]['amount'] += amount
-
-        wishlist = ([f" {item} - {value['amount']} "
-                     f"{value['measurement_unit']} \n"
-                     for item, value in shopping_list.items()])
-
-        response = HttpResponse(wishlist, 'Content-Type: text/plain')
-        response['Content-Disposition'] = 'attachment; filename="wishlist.txt"'
+        pdf.h1('Список ингредиентов')
+        pdf.spacer()
+        for item, value in shopping_list.items():
+            pdf.p(f'{item} - {value["amount"]}, {value["measurement_unit"]}')
+        pdf.generate()
         return response
 
 
@@ -140,6 +144,7 @@ class CastomUserViewSet(UserViewSet):
         context = {
             'request': request
         }
+        # TODO: Применить UniqueTogetherValidator
         if (Follow.objects.filter(user=user, author=author).exists()
                 or author == user):
             return Response(
