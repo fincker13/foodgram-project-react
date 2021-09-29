@@ -1,6 +1,7 @@
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.utils import model_meta
+from rest_framework.validators import UniqueTogetherValidator
 
 from .models import (Amount, Favorite, Follow, Ingredient, Recipes,
                      Shopping_cart, Tag, User)
@@ -195,3 +196,29 @@ class FollowSerializer(serializers.ModelSerializer):
     def get_recipes_count(self, obj):
         recipes_count = Recipes.objects.filter(author=obj.author).count()
         return recipes_count
+
+
+class FollowCreateSerializer(serializers.ModelSerializer):
+    queryset = User.objects.all()
+
+    class Meta:
+        model = Follow
+        fields = ('user', 'author')
+        validators = [UniqueTogetherValidator(
+            queryset=Follow.objects.all(),
+            fields=['user', 'author'],
+            message='Вы уже подписаны на данного пользователя'
+        )
+        ]
+
+    def validate(self, data):
+        if self.context['request'].user != data.get('author'):
+            return data
+        raise serializers.ValidationError('Нельзя подписаться на самого себя')
+
+    def to_representation(self, instance):
+        data = FollowSerializer(
+            instance,
+            context={'request': self.context.get('request')}
+        ).data
+        return data

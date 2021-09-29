@@ -12,7 +12,8 @@ from rest_framework.response import Response
 from .filters import IngredientSearchFilter, RecipesFilter
 from .models import (Amount, Favorite, Follow, Ingredient, Recipes,
                      Shopping_cart, Tag, User)
-from .serializers import (FollowSerializer, IngredientSerializer,
+from .serializers import (FollowSerializer, FollowCreateSerializer,
+                          IngredientSerializer,
                           RecipesGetSerializer, RecipesPostSerializer,
                           RecipesSerializer, TagSerializer, UserSerializer)
 
@@ -141,25 +142,22 @@ class CastomUserViewSet(UserViewSet):
     def subscribe(self, request, id):
         user = request.user
         author = get_object_or_404(User, id=id)
+        data = {
+            'user': user.id,
+            'author': author.id
+        }
         context = {
             'request': request
         }
         # TODO: Применить UniqueTogetherValidator
-        if (Follow.objects.filter(user=user, author=author).exists()
-                or author == user):
-            return Response(
-                'Вы уже подписаны на данного пользователя'
-                'или вы пытаеть подписаться на себя',
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        obj = Follow.objects.create(user=user, author=author)
-        obj.save()
-        serializer = FollowSerializer(obj, context=context)
+        serializer = FollowCreateSerializer(data=data, context=context)
+        serializer.is_valid()
+        serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @subscribe.mapping.delete
     def delete_subscribe(self, request, id):
-        user = request.user
+        user = request.user.username
         author = get_object_or_404(User, id=id)
         obj = Follow.objects.get(user=user, author=author)
         obj.delete()
