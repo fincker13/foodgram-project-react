@@ -117,7 +117,7 @@ class Favorite(models.Model):
     objects = models.Manager()
 
 
-class Shopping_cart(models.Model):
+class ShoppingCart(models.Model):
     user = models.ForeignKey(
         User,
         verbose_name='Подписчик',

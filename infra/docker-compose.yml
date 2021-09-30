@@ -43,9 +43,9 @@ services:
       dockerfile: Dockerfile
     command: python manage.py migrate
     env_file:
-      - .env
+      - ../backend/.env
     depends_on:
-      - db, django
+      - django
 
   nginx:
     container_name: Nginx

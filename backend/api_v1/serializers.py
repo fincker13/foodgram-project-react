@@ -4,7 +4,7 @@ from rest_framework.utils import model_meta
 from rest_framework.validators import UniqueTogetherValidator
 
 from .models import (Amount, Favorite, Follow, Ingredient, Recipes,
-                     Shopping_cart, Tag, User)
+                     ShoppingCart, Tag, User)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -87,7 +87,7 @@ class RecipesGetSerializer(serializers.ModelSerializer):
 
     def get_is_in_shopping_cart(self, obj):
         request_user = self.context.get('request').user
-        return Shopping_cart.objects.filter(
+        return ShoppingCart.objects.filter(
             user=request_user, recipes=obj).exists()
 
 

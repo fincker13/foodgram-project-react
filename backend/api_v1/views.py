@@ -11,7 +11,7 @@ from rest_framework.response import Response
 
 from .filters import IngredientSearchFilter, RecipesFilter
 from .models import (Amount, Favorite, Follow, Ingredient, Recipes,
-                     Shopping_cart, Tag, User)
+                     ShoppingCart, Tag, User)
 from .serializers import (FollowSerializer, FollowCreateSerializer,
                           IngredientSerializer,
                           RecipesGetSerializer, RecipesPostSerializer,
@@ -81,12 +81,12 @@ class RecipesViewSet(viewsets.ModelViewSet):
     def shopping_cart(self, request, pk=None):
         recipe = self.get_object()
         user = request.user
-        if Shopping_cart.objects.filter(user=user, recipes=recipe).exists():
+        if ShoppingCart.objects.filter(user=user, recipes=recipe).exists():
             return Response(
                 'Рецепт уже добавлен в Список кокупок',
                 status=status.HTTP_400_BAD_REQUEST
             )
-        obj = Shopping_cart.objects.create(
+        obj = ShoppingCart.objects.create(
             user=user, recipes=recipe
         )
         obj.save()
@@ -98,7 +98,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
     def delete_shopping_cart(self, request, pk=None):
         user = request.user
         recipes = self.get_object()
-        obj = Shopping_cart.objects.get(user=user, recipes=recipes)
+        obj = ShoppingCart.objects.get(user=user, recipes=recipes)
         obj.delete()
         serializer = RecipesSerializer(recipes)
         return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
