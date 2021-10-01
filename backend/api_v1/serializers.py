@@ -146,11 +146,10 @@ class RecipesPostSerializer(serializers.ModelSerializer):
         return instance
 
     def to_representation(self, instance):
-        data = RecipesGetSerializer(
+        return RecipesGetSerializer(
             instance,
             context={'request': self.context.get('request')}
         ).data
-        return data
 
 
 class RecipesSerializer(serializers.ModelSerializer):
@@ -194,8 +193,7 @@ class FollowSerializer(serializers.ModelSerializer):
         return RecipesSerializer(recipes, many=True).data
 
     def get_recipes_count(self, obj):
-        recipes_count = Recipes.objects.filter(author=obj.author).count()
-        return recipes_count
+        return Recipes.objects.filter(author=obj.author).count()
 
 
 class FollowCreateSerializer(serializers.ModelSerializer):
@@ -217,8 +215,7 @@ class FollowCreateSerializer(serializers.ModelSerializer):
         raise serializers.ValidationError('Нельзя подписаться на самого себя')
 
     def to_representation(self, instance):
-        data = FollowSerializer(
+        return FollowSerializer(
             instance,
             context={'request': self.context.get('request')}
         ).data
-        return data
