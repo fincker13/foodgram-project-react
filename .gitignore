@@ -132,10 +132,6 @@ dmypy.json
 # .idea
 .idea
 
-# migrations
-migrations
-migrations/
-
 # static & media
 django_static
 django_static/

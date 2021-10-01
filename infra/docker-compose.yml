@@ -20,9 +20,7 @@ services:
 
   django:
     container_name: Django
-    build: 
-      context: ../backend
-      dockerfile: Dockerfile
+    image: ruslanqui/foodgram_diplom:latest
     tty: true
     ports: 
       - '8000:8000'
@@ -35,17 +33,6 @@ services:
         - db
     env_file: 
         - ../backend/.env
-  
-  migrator:
-    container_name: Migrator
-    build: 
-      context: ../backend
-      dockerfile: Dockerfile
-    command: python manage.py migrate
-    env_file:
-      - ../backend/.env
-    depends_on:
-      - django
 
   nginx:
     container_name: Nginx
