@@ -12,10 +12,10 @@ from rest_framework.response import Response
 from .filters import IngredientSearchFilter, RecipesFilter
 from .models import (Amount, Favorite, Follow, Ingredient, Recipes,
                      ShoppingCart, Tag, User)
-from .serializers import (FollowSerializer, FollowCreateSerializer,
-                          IngredientSerializer,
-                          RecipesGetSerializer, RecipesPostSerializer,
-                          RecipesSerializer, TagSerializer, UserSerializer)
+from .serializers import (FollowCreateSerializer, FollowSerializer,
+                          IngredientSerializer, RecipesGetSerializer,
+                          RecipesPostSerializer, RecipesSerializer,
+                          TagSerializer, UserSerializer)
 
 
 class IngredientsViewSet(viewsets.ModelViewSet):
@@ -157,7 +157,7 @@ class CastomUserViewSet(UserViewSet):
 
     @subscribe.mapping.delete
     def delete_subscribe(self, request, id):
-        user = request.user.username
+        user = request.user.id
         author = get_object_or_404(User, id=id)
         obj = Follow.objects.get(user=user, author=author)
         obj.delete()

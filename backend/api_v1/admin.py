@@ -2,7 +2,6 @@ from django.contrib import admin
 
 from .models import Amount, Favorite, Follow, Ingredient, Recipes, Tag
 
-
 EMPTY_VALUE = '-пусто-'
 
 
