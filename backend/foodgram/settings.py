@@ -8,7 +8,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = os.getenv('SECRET_KEY', default='very_secret_key')
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [os.environ.get('HOST', default="*"), ]
 
@@ -110,8 +110,8 @@ USE_TZ = True
 STATIC_URL = '/django_static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'django_static')
 
-MEDIA_URL = '/django_media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'django_media')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 AUTH_USER_MODEL = 'users.User'
 

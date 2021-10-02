@@ -26,7 +26,7 @@ services:
       - db
     volumes:
       - static_value:/code/django_static/
-      - media_value:/code/django_media/
+      - media_value:/code/media/
     env_file: 
         - ../backend/.env
 
