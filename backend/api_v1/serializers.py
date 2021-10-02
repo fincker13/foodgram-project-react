@@ -73,7 +73,6 @@ class RecipesGetSerializer(serializers.ModelSerializer):
     author = UserSerializer()
     tags = TagSerializer(many=True)
     ingredients = AmountGetSerializer(source='amount_set', many=True)
-    image = serializers.ImageField()
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
 
@@ -102,7 +101,7 @@ class RecipesPostSerializer(serializers.ModelSerializer):
         queryset=Tag.objects.all()
     )
     ingredients = AmountPostSerializer(many=True)
-    image = Base64ImageField(required=False)
+    image = Base64ImageField()
 
     class Meta:
         model = Recipes
