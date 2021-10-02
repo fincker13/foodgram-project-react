@@ -21,16 +21,12 @@ services:
   django:
     container_name: Django
     image: ruslanqui/foodgram_diplom:latest
-    tty: true
-    ports: 
-      - '8000:8000'
-    expose: 
-      - 8000
+    restart: always
+    depends_on:
+      - db
     volumes:
       - static_value:/code/django_static/
       - media_value:/code/django_media/
-    depends_on: 
-        - db
     env_file: 
         - ../backend/.env
 
