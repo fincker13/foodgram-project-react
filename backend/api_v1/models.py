@@ -73,10 +73,10 @@ class Amount(models.Model):
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     amount = models.PositiveSmallIntegerField(
         verbose_name='Колличество',
-        validators=[MinValueValidator(
+        validators=(MinValueValidator(
             1,
             'Укажите корректное колличество продукта'
-        )]
+        ))
     )
     objects = models.Manager()
 
